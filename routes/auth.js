@@ -45,14 +45,26 @@ router.post("/login", async (req, res, next) => {
   }
 });
 
-// POST Register
+// POST register 
 router.post("/register", async (req, res, next) => {
-  const { username, password } = req.body;
-  if (username && password) {
+  const { username, password, role } = req.body;
+  if (!username || !password || !role) {
+    return next({
+      status: 400,
+      message: "Username, password och role är obligatoriska",
+    });
+  }
+  if (role !== "User" && role !== "admin") {
+    return next({
+      status: 400,
+      message: 'Role måste vara antingen "User" eller "admin"',
+    });
+  }
+  try {
     const result = await registerUser({
-      username: username,
-      password: password,
-      role: "User",
+      username,
+      password,
+      role,
       userId: `user-${uuid().substring(0, 5)}`,
     });
     if (result) {
@@ -66,11 +78,8 @@ router.post("/register", async (req, res, next) => {
         message: "User could not be created.",
       });
     }
-  } else {
-    next({
-      status: 400,
-      message: "Both username and password are required.",
-    });
+  } catch (error) {
+    next(error);
   }
 });
 

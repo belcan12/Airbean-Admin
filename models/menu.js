@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-
 const Schema = mongoose.Schema;
 
 const menuSchema = new Schema(
@@ -22,7 +21,14 @@ const menuSchema = new Schema(
       required: true,
     },
   },
-  { collection: "menu" }
+  {
+    collection: "menu",
+    
+    timestamps: {
+      createdAt: "createdAt",
+      updatedAt: "modifiedAt"
+    }
+  }
 );
 
 const Menu = mongoose.model("Menu", menuSchema);
